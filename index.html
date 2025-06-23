@@ -683,6 +683,13 @@ resources { 'Service':
 
 ![img](tidy.png)
 
+```puppet
+tidy { '/tmp':
+  age     => '1w',
+  recurse => 1,
+  matches => [ '[0-9]pub*.tmp', '*.temp', 'tmpfile?' ],
+}
+```
 ]
 
 <a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
@@ -690,6 +697,11 @@ resources { 'Service':
 
 ???
 
+* uses the RAL to collect all files
+* applies the different matchers
+* purges all matching files
+
+* sucks, because it adds one file resource for each file to the catalog
 ---
 
 .left-column[
@@ -714,7 +726,9 @@ resources { 'Service':
 ???
 
 * works on dirs and and files
+* purges the files at the end of the catalog application, without any dependencies to file resources
 
+* best solution is a systemd timer or systemd tmpfs configuration
 ---
 
 .left-column[
@@ -818,6 +832,8 @@ count: false
 * `puppet config print certname --section`
 
 * `puppet config set 'option' 'value' --section 'section'`
+
+* Valid sections: main, user, agent, server/master
 ]
 
 <a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
@@ -829,6 +845,7 @@ count: false
 * can read and write from puppet.conf
 * can disable defaults from the code that aren't in puppet.conf
 * identifies path to puppet.conf on its own
+
 
 ---
 
@@ -1762,6 +1779,126 @@ Sshkey <<| tag == $trusted['extensions']['pp_role'] and title != $trusted['certn
 
 * Works of course for IPs and ssh_authorized_keys and others as well
 ---
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+]
+
+.right-column[
+
+* https://www.puppet.com/docs/puppet/7/configuration#resubmit-facts
+
+* `puppet config set resubmit_facts true`
+
+* `puppet agent -t --resubmit_facts`
+
+* Evaluate all facts *after* catalog application and send them to PuppetDB
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+* by default, facts are only gathered and stored before the catalot is applied
+
+---
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+]
+
+.right-column[
+
+* [www.puppetmodule.info/modules](https://www.puppetmodule.info/modules)
+
+* Similar to http://rubydoc.info/, puppetmodule.info renders puppet modules and puppet-strings annotations
+
+* static site with module documentation
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+]
+
+.right-column[
+
+* [forge.puppet.com/puppet/healthcheck](https://forge.puppet.com/modules/puppet/healthcheck)
+
+* Types that block catalog application until a TCP or HTTP(S) connection is successful
+
+```puppet
+tcp_conn_validator { 'foo-machine ssh service' :
+  host => '192.168.0.42',
+  port   => 22,
+}
+```
+
+```puppet
+http_conn_validator { 'foo-machine home' :
+  host    => '127.0.0.1',
+  port    => 8081,
+  use_ssl => true,
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+### collections
+]
+
+.right-column[
+
+* [forge.puppet.com/puppet/collections](https://forge.puppet.com/modules/puppet/collections)
+
+* Collect and access data across multiple nodes
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
 class: center, middle, inverse
 
 # Conclusion<br/><br/>
