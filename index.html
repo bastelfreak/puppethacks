@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Puppet hacks you didn't know you were looking for</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+      @font-face {
+        font-family: "Yanone Kaffeesatz";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Yanone Kaffeesatz Regular"),
+          local("YanoneKaffeesatz-Regular"),
+          url(YDAoLskQQ5MOAgvHUQCcLbvy90DtE_Pg_qiF9bHvTzw.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Ubuntu Mono";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Ubuntu Mono Regular"), local("UbuntuMono-Regular"),
+          url(ViZhet7Ak-LRXZMXzuAfkZ0EAVxt0G0biEntp43Qt6E.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Droid Serif";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Droid Serif Regular"), local("DroidSerif-Regular"),
+          url(0AKsP294HTD-nvJgucYTaJ0EAVxt0G0biEntp43Qt6E.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Nunito Sans";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Nunito Sans Regular"), local("NunitoSans-Regular"),
+          url(NunitoSans-Regular.ttf)
+            format("truetype");
+      }
+      body {
+        font-family: "Nunito Sans";
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Yanone Kaffeesatz";
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .remark-slide-content {
+        background-image: url(blue-skies.jpg);
+        background-size: cover;
+      }
+      .remark-slide-content h1 {
+        font-size: 3em;
+      }
+      .remark-slide-content h2 {
+        font-size: 2em;
+      }
+      .remark-slide-content h3 {
+        font-size: 1.6em;
+      }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p {
+        line-height: 1.25em;
+      }
+      .red {
+        color: #fa0000;
+      }
+      .large {
+        font-size: 2em;
+      }
+      a,
+      a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        -moz-border-radius: 5px;
+        -web-border-radius: 5px;
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code,
+      .remark-inline-code {
+        font-family: "Ubuntu Mono";
+      }
+      .remark-code-line-highlighted {
+        background-color: #373832;
+      }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverseold {
+        background: #09194F;
+        background-image: url(dots.png), url(BD_Wortmarke_weiss.png);
+        background-repeat: no-repeat;
+        background-position: top 12px left 20px, top 12px right 20px;
+        background-size: 30%, 10%;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverseold h1,
+      .inverseold h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+      .inverse, .inversedoubleheading {
+        background: #09194F;
+        background-image: url(dots.png), url(BD_Wortmarke_weiss.png), url(circle.png);
+        background-repeat: no-repeat;
+        background-position: top 12px left 20px, top 12px right 20px, center center;
+        background-size: 30%, 10%, 50%;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1,
+      .inverse h2,
+      .inversedoubleheading h1,
+      .inversedoubleheading h2 {
+        color: #f3f3f3;
+      }
+      .inverse h2 {
+        line-height: 0.8em;
+        margin-top: 0.8em;
+      }
+      .inverse h1 {
+        margin-top: 0em;
+        line-height: 1.1em;
+      }
+      .inversedoubleheading h1 {
+        margin-top: -1em;
+        line-height: 1.1em;
+      }
+      .inversedoubleheading h2 {
+        line-height: 0.8em;
+        margin-top: 0.8em;
+      }
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top: 151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first,
+      #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+      /* Two-column layout */
+      .puppetlogo img {
+        width: 95%;
+      }
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+      .left-column h2:last-of-type,
+      .left-column h3:last-child {
+        color: #000;
+      }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+      .right-column .something img {
+        width: 100%;
+        height: 550px;
+      }
+      .right-column .smallimg img {
+        width: 90%;
+      }
+      .right-column .nowidth img {
+        width: auto;
+      }
+      .right-column-center {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+        text-align: center;
+      }
+      .right-column img {
+        width: 100%;
+      }
+      @page {
+        size: 1920px 1080px;
+        margin: 0;
+      }
+      @media print {
+        .remark-slide-scaler {
+          width: 100% !important;
+          height: 100% !important;
+          transform: scale(1) !important;
+          top: 0 !important;
+          left: 0 !important;
+          size: 1920px 1080px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse
+
+# Puppet<br/>Hacks
+
+???
+
+---
+class: center, middle, inversedoubleheading
+
+# Puppet Hacks
+
+## <br/>you didn't know you were looking for
+
+???
+
+---
+## $ whoami
+<img src="bastelfreak2.jpg" alt="drawing" style="float: right;width: 400px;"/>
+
+* Tim 'bastelfreak' Meusel
+
+* Puppet Contributor since 2012
+
+* Merging stuff on [Vox Pupuli](https://voxpupuli.org/) (Puppet Community) since 2015
+
+* Vox Pupuli Project Management Committee member
+
+* Senior IT Automation Consultant at [betadots](https://betadots.de/)
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+???
+
+* who has seen this picture before because I reviewed/merged your pull request?
+
+---
+class: center, middle, inverse
+
+# Resource Abstraction<br/>Layer
+
+???
+
+---
+.left-column[
+## RAL
+]
+
+.right-column[
+* Puppet uses RAL - Resource Abstraction Layer
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+Who knows the RAL?
+
+---
+.left-column[
+## RAL
+]
+
+.right-column[
+* Puppet uses RAL - Resource Abstraction Layer
+
+* Abstracts package manager away into Puppet resources
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## RAL
+]
+
+.right-column[
+* Puppet uses RAL - Resource Abstraction Layer
+
+* Abstracts package manager away into Puppet resources
+
+* Implemented via types and providers
+
+```puppet
+package { 'htop':
+  ensure => 'installed',
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## RAL
+]
+
+.right-column[
+* Puppet uses RAL - Resource Abstraction Layer
+
+* Abstracts package manager away into Puppet resources
+
+* Implemented via types and providers
+
+```puppet
+package { 'htop':
+  ensure => 'installed',
+}
+```
+
+* List available types on CLI
+
+* `puppet resource --types`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Switch to terminal and show? Works as root/normal user
+
+---
+
+.left-column[
+## RAL
+### Find Resources
+]
+
+.right-column[
+* RAL can be triggered on the CLI!
+
+* `puppet resource package htop`
+
+```puppet
+package { 'htop':
+  ensure   => '3.4.1-1',
+  provider => 'pacman',
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## RAL
+### Find Resources
+]
+
+.right-column[
+* RAL can be triggered on the CLI!
+
+* `puppet resource package htop`
+
+```puppet
+package { 'htop':
+  ensure   => '3.4.1-1',
+  provider => 'pacman',
+}
+```
+
+* Can output all instances of a resource type
+
+* `puppet resource package`
+
+```puppet
+package { 'yamllint':
+  ensure   => '1.33.0-1',
+  provider => 'pacman',
+}
+package { 'yard':
+  ensure   => ['0.9.26'],
+  provider => 'gem',
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Puppet needs to know the current state of a resource before code is applied
+* required to detect if changes are needed
+* prefetch needs to be implemented in the provider
+* check yard ensure, array
+
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+]
+
+.right-column[
+* Can modify a resource instance
+
+* `puppet resource package htop ensure=absent`
+
+```puppet
+Notice: /Package[htop]/ensure: removed
+package { 'htop':
+  ensure   => 'absent',
+  provider => 'pacman',
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* You can also pass the other parameters
+---
+
+count: false
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+]
+
+.right-column[
+* Can modify a resource instance
+
+* `puppet resource package htop ensure=absent`
+
+```puppet
+Notice: /Package[htop]/ensure: removed
+package { 'htop':
+  ensure   => 'absent',
+  provider => 'pacman',
+}
+```
+
+* Can modify a resource instance with debug output!
+
+* `puppet resource package htop ensure=absent --debug`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+]
+
+.right-column[
+* Can modify a resource instance
+
+* `puppet resource package htop ensure=absent`
+
+```puppet
+Notice: /Package[htop]/ensure: removed
+package { 'htop':
+  ensure   => 'absent',
+  provider => 'pacman',
+}
+
+```
+* Can modify a resource instance with debug output!
+
+* `puppet resource package htop ensure=absent --debug`
+
+* Can simulate a change!
+
+* `puppet resource package htop ensure=absent --debug --noop`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Puppet CLI args like debug and noop can be passed to every `puppet resource package`
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+* [puppet.com/docs/puppet/8/type#resources](https://www.puppet.com/docs/puppet/8/type#resources)
+
+![img](resources.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Who knows the resources resource type?
+
+* Who used it?
+
+* Who likes it?
+
+* I took the screenshots some time ago in case perforce fucks up their docs. well they did now
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+```puppet
+resources { 'User':
+  purge => true,
+}
+
+resources { 'Package':
+  purge => true,
+}
+
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* purge all users not managed by puppet
+* show resources.pp
+* Resource title has the resource capitalized
+
+---
+
+count: false
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+```puppet
+resources { 'User':
+  purge => true,
+}
+
+resources { 'Package':
+  purge => true,
+}
+
+resources { 'Service':
+  purge => true,
+  noop  => false,
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* noop is nice because it will inform you about unmanaged/unexpected resources
+* not so useful for packages or users
+* but what about database users
+* backends in your F5?
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+* [forge.puppet.com/crayfishx/purge](https://forge.puppet.com/modules/crayfishx/purge/readme)
+
+![img](purge.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+![img](purge2.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+
+![img](tidy.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## RAL
+### Find Resources
+### Modify Resources
+### Purge Resources
+]
+.right-column[
+
+* Purging files and directories
+
+* [enterprisemodules.com/blog/2022/02/cleanup-temporary-files-in-puppet](https://www.enterprisemodules.com/blog/2022/02/cleanup-temporary-files-in-puppet/)
+
+![img](cleanup.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* works on dirs and and files
+
+---
+
+.left-column[
+## RAL
+]
+.right-column[
+* Further documentation
+
+* https://petersouter.xyz/the-puppet-resource-abstraction-layer-ral-explained-part-1/
+
+* https://www.puppet.com/docs/puppet/7/man/resource
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+class: center, middle, inverse
+
+# Puppet<br/>Faces
+
+???
+
+---
+
+.left-column[
+## Faces
+]
+.right-column[
+
+* https://puppetcommunity.slack.com/archives/C0W1X7ZAL/p1705520404613479?thread_ts=1705511900.536469&cid=C0W1X7ZAL
+
+![img](2024-01-17_22-17.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* An awesome way to extend the Puppet CLI
+* Allows you to access puppet as a lib
+
+---
+
+.left-column[
+## Faces
+]
+
+.right-column[
+* Faces were "deprecated" but won't be removed: https://www.puppet.com/docs/puppet/5.5/deprecated_api.html
+
+* Kelsey Hightower explaining faces in 2011: https://www.youtube.com/watch?v=WUlYEJ-fpfU
+
+* Faces are used heavily within Puppet: https://github.com/puppetlabs/puppet/tree/main/lib/puppet/face
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## Faces
+]
+
+.right-column[
+* Faces were "deprecated" but won't be removed: https://www.puppet.com/docs/puppet/5.5/deprecated_api.html
+
+* Kelsey Hightower explaining faces in 2011: https://www.youtube.com/watch?v=WUlYEJ-fpfU
+
+* Faces are used heavily within Puppet: https://github.com/puppetlabs/puppet/tree/main/lib/puppet/face
+
+* "Puppet Applications" are the successor for Faces
+
+* [github.com/puppetlabs/puppet/blob/main/lib/puppet/application.rb](https://github.com/puppetlabs/puppet/blob/49d74c94c848d4d4f4d022b58ff8135b2f46e7b0/lib/puppet/application.rb#L10)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Faces
+### config
+]
+
+.right-column[
+* `puppet config print`
+
+* `puppet config print certname`
+
+* `puppet config print certname --section`
+
+* `puppet config set 'option' 'value' --section 'section'`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* config face is builtin
+* can read and write from puppet.conf
+* can disable defaults from the code that aren't in puppet.conf
+* identifies path to puppet.conf on its own
+
+---
+
+.left-column[
+## Faces
+### config
+### catalog diff
+]
+
+.right-column[
+* [github.com/voxpupuli/puppet-catalog_diff](https://github.com/voxpupuli/puppet-catalog_diff/tree/master?tab=readme-ov-file#overview)
+
+* The tool can automatically compile the catalogs for both your new and older servers/environments. It can ask the master to use PuppetDB to compile the catalog for the last known environment with the last known facts. It can then validate against PuppetDB that the node is still active. This filtered list should contain only machines that have not been decommissioned in PuppetDB (important as compiling their catalogs would also reactive them and their exports otherwise).
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* `catalog` face exists in core, `catalog diff` is custom, maintained by Vox Pupuli
+
+---
+
+.left-column[
+## Faces
+### config
+### catalog diff
+]
+
+.right-column[
+* `puppet catalog diff puppet.example.com/production puppet.example.com/staging --filter_old_env`
+
+* `puppet catalog diff /foo/old/node1.example.com.json /foo/new/node1.example.com.json`
+
+* [voxpupuli.org/puppet-catalog-diff-viewer](https://voxpupuli.org/puppet-catalog-diff-viewer/)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* diff catalogs from PuppetDB or compile new ones
+* diff between environments
+* diff between different Puppet infrastructures
+* Visualize reports
+* deserves its own talk, Raphael did some in the past, linked in the README.md
+
+---
+
+.left-column[
+## Faces
+### config
+### catalog diff
+]
+
+.right-column[
+![img](diff.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+
+---
+
+.left-column[
+## Faces
+### config
+### catalog diff
+### node exports
+]
+
+.right-column[
+
+* provide a list of exported resources in PuppetDB
+
+* `watch 'puppet node exports'`
+
+* [forge.puppet.com/zack/exports](https://forge.puppet.com/modules/zack/exports/readme#example-usage)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## Faces
+### config
+### catalog diff
+### node exports
+]
+
+.right-column[
+
+* provide a list of exported resources in PuppetDB
+
+* `watch 'puppet node exports'`
+
+* [forge.puppet.com/zack/exports](https://forge.puppet.com/modules/zack/exports/readme#example-usage)
+
+* Lists all exported resources
+
+* Can be filtered for resource types (for example File)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## Faces
+### config
+### catalog diff
+### node exports
+]
+
+.right-column[
+
+* provide a list of exported resources in PuppetDB
+
+* `watch 'puppet node exports'`
+
+* [forge.puppet.com/zack/exports](https://forge.puppet.com/modules/zack/exports/readme#example-usage)
+
+* Lists all exported resources
+
+* Can be filtered for resource types (for example File)
+
+* Doesn't work properly with Puppet 8 :sadface:
+
+![img](exports.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+It uses a deprecated HTTP client
+---
+
+class: center, middle, inverse
+
+# Puppet<br/>CLI
+
+???
+
+---
+
+.left-column[
+## CLI
+]
+
+.right-column[
+
+* `puppet agent -t`
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count:false
+
+.left-column[
+## CLI
+]
+
+.right-column[
+
+* `puppet agent -t`
+
+* `puppet agent --test`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+those are equal
+
+---
+
+count:false
+
+.left-column[
+## CLI
+]
+
+.right-column[
+
+* `puppet agent -t`
+
+* `puppet agent --test`
+
+* `puppet agent --verbose --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay --show_diff`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## CLI
+]
+
+.right-column[
+
+* `puppet agent -t`
+
+* `puppet agent --test`
+
+* `puppet agent --verbose --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay --show_diff`
+
+* Who knows more CLI invocations?
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## CLI
+]
+
+.right-column[
+
+* `puppet agent -t`
+
+* `puppet agent --test`
+
+* `puppet agent --verbose --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay --show_diff`
+
+* Who knows more CLI invocations?
+
+* Some Options are only available on the CLI: `puppet agent --help`
+
+* Every config option can be set and overwritten on CLI: https://www.puppet.com/docs/puppet/8/configuration.html
+
+* `puppet agent -t --no-noop`
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* puppet.conf can be overwritten on CLI
+* See --no-splay above to disable options
+
+* Add noop=true to puppet.conf
+* when you want to apply changes, run with --no-noop
+
+---
+
+.left-column[
+## CLI
+### trace
+]
+
+.right-column[
+* `--trace` is a common option in the Ruby ecosystem
+
+* available in puppet faces as well
+
+![img](trace.png)
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Remember our error from earlier? It had no line/file information
+* now it has, exports.rb line 63
+
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+]
+
+.right-column[
+
+* `puppet agent -t --debug`
+
+* Prints all HTTP calls to puppetserver
+
+* Lists all resources and if they are already in the desired state
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count:false
+
+.left-column[
+## CLI
+### trace
+### debug
+]
+
+.right-column[
+
+* `puppet agent -t --debug`
+
+* Prints all HTTP calls to puppetserver
+
+* Lists all resources and if they are already in the desired state
+
+* prints all debug messages
+
+* Facter: `Facter.debug('my debug text')`
+
+* Puppet Types/Provider: `Puppet.debug('my other debug text')`
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Now we can extend our code with many debug messages
+* but what if we need to dig deep
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+]
+
+.right-column[
+![img](deeper.jpg)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+]
+
+.right-column[
+* `puppet agent -t --http_debug`
+
+* Dumps every HTTP Payload and Headers from/to Puppetserver
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+]
+
+.right-column[
+* `puppet agent -t --http_debug`
+
+* Dumps every HTTP Payload and Headers from/to Puppetserver
+
+* As base64
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+]
+
+.right-column[
+![img](http.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+]
+
+.right-column[
+* `puppet agent -t --evaltrace`
+
+* prints all resources and their evaluation time
+
+![img](eval.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Who knows that option?
+* naming things is hard. evaltrace written together. http_debug uses an underscore
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+]
+
+.right-column[
+* `puppet agent -t --trace --evaltrace --debug --http_debug`
+
+* All options can be combined
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+]
+
+.right-column[
+* `puppet agent -t --trace --evaltrace --debug --http_debug`
+
+* All options can be combined
+
+* You will need a very big screen!
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* This is a lot of output
+
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+### timing
+]
+
+.right-column[
+* `puppet facts show` # show all facts
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+### timing
+]
+
+.right-column[
+* `puppet facts show` # show all facts
+
+* `puppet facts show $fact` # show a single fact named fact
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+### timing
+]
+
+.right-column[
+* `puppet facts show` # show all facts
+
+* `puppet facts show $fact` # show a single fact named fact
+
+* `puppet facts show --timing` # timing per fact resolution
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## CLI
+### trace
+### debug
+### http_debug
+### evaltrace
+### timing
+]
+
+.right-column[
+![img](facter.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+class: center, middle, inverse
+
+# Design Pattern<br/>and Hacks
+
+???
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+]
+
+.right-column[
+* LLDP - Link Layer Distribution Protocol
+
+* IEEE-802.1AB standard
+
+* exchange information between direct layer 2 peers
+
+* Common protocol for Routers, Switches *and servers*
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+]
+
+.right-column[
+* LLDP - Link Layer Distribution Protocol
+
+* IEEE-802.1AB standard
+
+* exchange information between direct layer 2 peers
+
+* Common protocol for Routers, Switches *and servers*
+
+* Linux: [github.com/lldpd/lldpd](https://github.com/lldpd/lldpd)
+
+* Puppet Module: [forge.puppet.com/puppet/lldpd](https://forge.puppet.com/modules/puppet/lldpd/readme)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+]
+
+.right-column[
+![img](lldpd.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+
+???
+
+* VMs/Hypervisor run LLDP
+* VM knows on which HV it is running
+* Hypervisor knows to wich switches it's connected
+* Switches know which hypervisors and routers are connected
+* All those information can be stored to PuppetDB
+* the puppet module has a fact that exports the data
+* you can query PuppetDB to find out which devices are connected to each other and plot them live!
+* I would love to throw this into a graph database at some point
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/voxpupuli/puppet-puppet_ca_utils](https://github.com/voxpupuli/puppet-puppet_ca_utils)
+
+* Can crosssign Puppet CAs
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Helpful if you've a new and old Infra and want to migrate agents
+* You can configure if Agents should be able to talk to both CAs or Agent from A only to A and B but B not do A
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/voxpupuli/puppet-puppet_ca_utils](https://github.com/voxpupuli/puppet-puppet_ca_utils)
+
+* Can crosssign Puppet CAs
+
+* [github.com/voxpupuli/puppet-puppet_certificate](https://github.com/voxpupuli/puppet-puppet_certificate)
+
+* Allow Agents to renew their own certificate
+
+* Update CSR/SAN attributes
+
+```puppet
+file { '/etc/puppetlabs/puppet/csr_attributes.yaml':
+  ensure  => file,
+  owner   => 'root',
+  group   => 'root',
+  mode    => '0440',
+  content => epp('example/csr_attributes.yaml.epp'),
+}
+
+~> puppet_certificate { $certname:
+  ensure      => present,
+  waitforcert => 60,
+  onrefresh   => regenerate,
+}
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/voxpupuli/puppet-puppet_ca_utils](https://github.com/voxpupuli/puppet-puppet_ca_utils)
+
+* Can crosssign Puppet CAs
+
+* [github.com/voxpupuli/puppet-puppet_certificate](https://github.com/voxpupuli/puppet-puppet_certificate)
+
+* Allow Agents to renew their own certificate
+
+* Update CSR/SAN attributes
+
+```puppet
+file { '/etc/puppetlabs/puppet/csr_attributes.yaml':
+  ensure  => file,
+  owner   => 'root',
+  group   => 'root',
+  mode    => '0440',
+  content => epp('example/csr_attributes.yaml.epp'),
+}
+
+~> puppet_certificate { $certname:
+  ensure      => present,
+  waitforcert => 60,
+  onrefresh   => regenerate,
+}
+```
+
+* Puppet 8 supports auto cert renewal: [puppet.com/docs/puppet/8/release_notes](https://www.puppet.com/docs/puppet/8/release_notes_puppet#release_notes_puppet_x-8-2-0)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* Use PuppetCA for personal certificates
+
+* Use personal certificates to authenticate to local services
+
+* `puppet ssl bootstrap --certname "$(hostname -f)-${USER}"`
+
+![img](ca.png)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Nginx for example can validate client TLS certificates
+
+* admins can use that for internal sites
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/m0dular/ca_extend](https://github.com/m0dular/ca_extend?tab=readme-ov-file#ca_extend)
+
+* Extend a Open Source CA
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/m0dular/ca_extend](https://github.com/m0dular/ca_extend?tab=readme-ov-file#ca_extend)
+
+* Extend a Open Source CA
+
+* [github.com/puppetlabs/ca_extend](https://github.com/puppetlabs/ca_extend?tab=readme-ov-file#ca_extend)
+
+* Extend a PE CA
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+]
+
+.right-column[
+* [github.com/m0dular/ca_extend](https://github.com/m0dular/ca_extend?tab=readme-ov-file#ca_extend)
+
+* Extend a Open Source CA
+
+* [github.com/puppetlabs/ca_extend](https://github.com/puppetlabs/ca_extend?tab=readme-ov-file#ca_extend)
+
+* Extend a PE CA
+
+* [My Shell script to extend a CA](https://gist.github.com/bastelfreak/034fca2e7719351fe42c28e7844dace5)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+]
+
+.right-column[
+
+* Use PuppetDB to dynamically build your clusters
+
+```puppet
+# Get FQDNs for all cluster peers
+$query = "inventory[certname] {
+  trusted.extensions.pp_role = 'consul' and trusted.extensions.pp_region = 'eu-01'
+}"
+$nodes = puppetdb_query($query).map |$value| { $value["certname"] }
+```
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+]
+
+.right-column[
+
+* Use PuppetDB to dynamically build your clusters
+
+```puppet
+# Get FQDNs for all cluster peers
+$query = "inventory[certname] {
+  trusted.extensions.pp_role = 'consul' and trusted.extensions.pp_region = 'eu-01'
+}"
+$nodes = puppetdb_query($query).map |$value| { $value["certname"] }
+```
+
+```puppet
+@@sshkey{$trusted['certname']:
+  host_aliases => [$facts['ipaddress6'], $facts['ipaddress']],
+  type         => "ssh-${type}",
+  key          => $facts['ssh'][$type]['key'],
+  # defaults to /etc/ssh/ so all users can use it
+  #target       => '/root/.ssh/known_hosts',
+  tag          => $trusted['extensions']['pp_role'],
+}
+## import host key
+Sshkey <<| tag == $trusted['extensions']['pp_role'] and title != $trusted['certname'] |>>
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Often systems want a list of all backend systems, consul for example
+
+* Works of course for IPs and ssh_authorized_keys and others as well
+---
+class: center, middle, inverse
+
+# Conclusion<br/><br/>
+
+???
+
+---
+.left-column[
+## Conclusion
+]
+
+.right-column[
+
+* Puppet is very flexible and suiteable for different usecases
+
+* There are many hidden gems and extensions available
+
+* More docs from Puppet/Perforce for edgecases & advanced users would be awesome!
+
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* Need help with opensourcing your puppet modules or rubygems or CI setup? Let us know
+---
+
+count: false
+
+.left-column[
+## Conclusion
+]
+
+.right-column[
+* Puppet is very flexible and suiteable for different usecases
+
+* There are many hidden gems and extensions available
+
+* More docs from Puppet/Perforce for edgecases & advanced users would be awesome!
+
+* For feedback: `bastelfreak` on <a href="https://slack.puppet.com/">slack.puppet.com</a>/Libera.Chat IRC or [tim@bastelfreak.de](mailto:tim@bastelfreak.de)
+
+* This talk and previous ones: <a href='https://github.com/bastelfreak/talks'>github.com/bastelfreak/talks</a>
+
+### Thanks for your attention!
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+
+    </textarea>
+    <script src="remark-latest.min.js"></script>
+    <script>
+      var slideshow = remark.create({
+        // Set the slideshow display ratio
+        // Default: '4:3'
+        // Alternatives: '16:9', ...
+        ratio: "16:9",
+        highlightStyle: "github"
+      });
+    </script>
+  </body>
+</html>
