@@ -9,10 +9,9 @@ This talk is for you! We will go through all the hidden gems of cli commands and
 puppet concects you won't find in the documentation. And we will talk about
 tuning and debugging your puppetserver(s)
 
-
 * Online Repo: [github.com/bastelfreak/puppethacks](https://github.com/bastelfreak/puppethacks?tab=readme-ov-file#puppet-hacks-you-didnt-know-you-were-looking-for)
 * Online Slides: [bastelfreak.de/puppethacks/](https://bastelfreak.de/puppethacks/index.html)
-* PDF: [github.com/bastelfreak/cfgmgmtcamp2024/blob/main/Puppet_hacks_you_didn_t_know_you_were_looking_for.pdf](https://github.com/bastelfreak/cfgmgmtcamp2024/blob/main/Puppet_hacks_you_didn_t_know_you_were_looking_for.pdf)
+* PDF: [github.com/bastelfreak/puppethacks/blob/master/Puppet%20hacks%20you%20didn't%20know%20you%20were%20looking%20for.pdf](https://github.com/bastelfreak/puppethacks/blob/master/Puppet%20hacks%20you%20didn't%20know%20you%20were%20looking%20for.pdf)
 
 ## License & Infos
 
