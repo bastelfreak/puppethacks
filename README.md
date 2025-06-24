@@ -13,6 +13,7 @@ tuning and debugging your puppetserver(s)
 * Online Slides: [bastelfreak.de/puppethacks/](https://bastelfreak.de/puppethacks/index.html)
 * PDF: [github.com/bastelfreak/puppethacks/blob/master/Puppet%20hacks%20you%20didn't%20know%20you%20were%20looking%20for.pdf](https://github.com/bastelfreak/puppethacks/blob/master/Puppet%20hacks%20you%20didn't%20know%20you%20were%20looking%20for.pdf)
 
+* At Config Management Camp 2024 I gave a previous version of this talk, with less content: https://github.com/bastelfreak/cfgmgmtcamp2024?tab=readme-ov-file#puppet-hacks-you-didnt-know-you-were-looking-for
 ## License & Infos
 
 * This project contains two licenses. The code is licensed as [GNU Affero General Public License v3.0](LICENSE). The documentation/text is licsensed as [CC BY-NC-SA 4.0](LICENSE2).
