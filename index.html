@@ -1603,7 +1603,7 @@ file { '/etc/puppetlabs/puppet/csr_attributes.yaml':
 }
 ```
 
-* Puppet 8 supports auto cert renewal: [puppet.com/docs/puppet/8/release_notes](https://www.puppet.com/docs/puppet/8/release_notes_puppet#release_notes_puppet_x-8-2-0)
+* Puppet 8.2 supports auto cert renewal: [puppet.com/docs/puppet/8/release_notes](https://www.puppet.com/docs/puppet/8/release_notes_puppet#release_notes_puppet_x-8-2-0)
 ]
 
 <a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
@@ -1881,14 +1881,22 @@ http_conn_validator { 'foo-machine home' :
 ### Updating PuppetDB
 ### puppetmoduleinfo
 ### healthchecks
-### collections
+### features
 ]
 
 .right-column[
+* Facts can be confined to facts, a ruby code block, or a feature
 
-* [forge.puppet.com/puppet/collections](https://forge.puppet.com/modules/puppet/collections)
-
-* Collect and access data across multiple nodes
+```ruby
+# lib/facter/cem_inetd.rb
+Facter.add(:cem_inetd) do
+  confine kernel: 'Linux'
+  ...
+  setcode do
+    ...
+  end
+end
+```
 ]
 
 <a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
@@ -1898,6 +1906,148 @@ http_conn_validator { 'foo-machine home' :
 
 
 ---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+### features
+]
+
+.right-column[
+* Facts can be confined to facts, a ruby code block, or a feature
+
+```ruby
+# lib/puppet/feature/cem_inetd.rb
+require 'puppet/util/feature'
+
+Puppet.features.add(:cem_inetd) do
+  inetd = `sh -c 'command -v inetd'`.strip
+  xinetd = `sh -c 'command -v xinetd'`.strip
+  inetd.empty? && xinetd.empty? ? false : true
+end
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+### features
+]
+
+.right-column[
+* Facts can be confined to facts, a ruby code block, or a feature
+
+```ruby
+# lib/puppet/feature/awesome.rb
+require 'puppet/util/feature'
+
+Puppet.features.add(:awesome, libs: ['sinatra'])
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+### features
+]
+
+.right-column[
+* Facts can be confined to facts, a ruby code block, or a feature
+
+```ruby
+# lib/facter/cem_inetd.rb
+Facter.add(:cem_inetd) do
+  confine kernel: 'Linux'
+  confine { Puppet.features.cem_inetd? }
+  confine { Puppet.features.awesome? }
+  setcode do
+    ...
+  end
+end
+```
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
+count: false
+
+.left-column[
+## Hacks & Patterns
+### LLDP
+### Puppet CA
+### Clusterfoo
+### Updating PuppetDB
+### puppetmoduleinfo
+### healthchecks
+### features
+]
+
+.right-column[
+* Facts can be confined to facts, a ruby code block, or a feature
+
+```ruby
+# lib/facter/cem_inetd.rb
+Facter.add(:cem_inetd) do
+  confine kernel: 'Linux'
+  confine { Puppet.features.cem_inetd? }
+  confine { Puppet.features.awesome? }
+  setcode do
+    ...
+  end
+end
+```
+
+* Features can be referenced in provider as well
+* https://dev.to/puppet/features-the-forgotten-feature-of-puppet-12p2
+* [Feature in puppet/zabbix module](https://github.com/voxpupuli/puppet-zabbix/blob/master/lib/puppet/feature/zabbixapi.rb)
+* [Using the feature in puppet/zabbix](https://github.com/voxpupuli/puppet-zabbix/blob/master/lib/puppet/provider/zabbix_application/ruby.rb#L6)
+]
+
+<a href='https://betadots.de' alt='company website betadots'><img src="logo-1181x1181.png" alt="drawing" style="position: fixed; bottom: 12px; left: 20px; width: 100px;"/></a>
+.footnote[[bastelfreak](https://github.com/bastelfreak) for [Vox Pupuli](https://voxpupuli.org)]
+
+???
+
+
+---
+
 
 class: center, middle, inverse
 
